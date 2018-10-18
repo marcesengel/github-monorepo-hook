@@ -1,0 +1,36 @@
+{
+  "name": "github-monorepo-hook",
+  "version": "0.0.0",
+  "description": "A utility function to extract changed packages in a monorepo from GitHub web hooks",
+  "author": "DragonRaider5 <marces.engel@googlemail.com>",
+  "homepage": "https://github.com/DragonRaider5/github-monorepo-hook#readme",
+  "license": "MIT",
+  "main": "src/index.js",
+  "directories": {
+    "src": "src",
+    "test": "src/__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DragonRaider5/github-monorepo-hook.git"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "bugs": {
+    "url": "https://github.com/DragonRaider5/github-monorepo-hook/issues"
+  },
+  "devDependencies": {
+    "casual": "^1.5.19",
+    "jest": "^23.6.0"
+  },
+  "dependencies": {
+    "github-api": "^3.0.0",
+    "safe-compare": "^1.1.2"
+  }
+}
