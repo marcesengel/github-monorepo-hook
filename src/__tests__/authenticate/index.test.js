@@ -15,9 +15,31 @@ describe('authenticate()', () => {
   }))
   safeCompare.mockImplementation(() => casual.uuid)
 
+  let oldSecret
+  beforeAll(() => {
+    oldSecret = process.env.GITHUB_SECRET
+    process.env.GITHUB_SECRET = casual.word
+  })
+
+  afterAll(() => {
+    process.env.GITHUB_SECRET = oldSecret
+  })
+
   beforeEach(() => {
     crypto.createHmac.mockClear()
     safeCompare.mockClear()
+  })
+
+  it('creates no HMAC and returns true if GITHUB_SECRET is not defined', () => {
+    const oldSecret = process.env.GITHUB_SECRET
+    delete process.env.GITHUB_SECRET
+
+    const result = authenticate()
+
+    expect(result).toBe(true)
+    expect(crypto.createHmac).toHaveBeenCalledTimes(0)
+
+    process.env.GITHUB_SECRET = oldSecret
   })
 
   describe('createHmac', () => {
@@ -34,16 +56,11 @@ describe('authenticate()', () => {
     })
 
     it('gets passed GITHUB_SECRET from process.env as the secret', () => {
-      const oldSecret = process.env.GITHUB_SECRET
-      process.env.GITHUB_SECRET = casual.word
-
       authenticate()
 
       expect(crypto.createHmac.mock.calls[0][1]).toBe(
         process.env.GITHUB_SECRET
       )
-
-      process.env.GITHUB_SECRET = oldSecret
     })
   })
 
