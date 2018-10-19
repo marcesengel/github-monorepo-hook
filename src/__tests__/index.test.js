@@ -38,8 +38,7 @@ describe('facemurphy-backend-deploy', () => {
       expect(getUpdatedPackages).toHaveBeenCalledWith({
         before: body.before,
         repositoryName: body.repository.full_name,
-        packagePath,
-        packages
+        packages: packages.map((pkg) => packagePath + pkg)
       })
     })
 
