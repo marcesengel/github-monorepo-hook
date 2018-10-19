@@ -1,6 +1,6 @@
 {
   "name": "github-monorepo-hook",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A utility function to extract changed packages in a monorepo from GitHub web hooks",
   "author": "DragonRaider5 <marces.engel@googlemail.com>",
   "homepage": "https://github.com/DragonRaider5/github-monorepo-hook#readme",
