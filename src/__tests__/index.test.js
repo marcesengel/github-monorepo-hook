@@ -42,13 +42,14 @@ describe('facemurphy-backend-deploy', () => {
       })
     })
 
-    it('returns false if getUpdatedPackages returns an empty array', async () => {
-      getUpdatedPackages.mockResolvedValueOnce([])
+    it('returns the result of getUpdatedPackages', async () => {
+      const updatedPackages = [ casual.word ]
+      getUpdatedPackages.mockResolvedValueOnce(updatedPackages)
 
       const result = await handler({})
 
       expect(getUpdatedPackages).toHaveBeenCalledTimes(1)
-      expect(result).toBe(false)
+      expect(result).toBe(updatedPackages)
     })
   })
 
