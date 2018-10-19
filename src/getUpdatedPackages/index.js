@@ -1,21 +1,22 @@
 const GitHub = require('github-api')
 
-module.exports = async ({ before, repositoryName, packages }) => {
+module.exports = async ({ before: shaBefore, repositoryName, packages = [] } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
-  const gh = new GitHub(ghToken && {
+  const repository = new GitHub(ghToken && {
     token: ghToken
-  }).getRepo()
+  }).getRepo(repositoryName)
 
   const packagesHaveCommits = await Promise.all(
-    packages.map((repo) => (
-      gh.listCommits({
+    packages.map((pkg) => (
+      repository.listCommits({
         sha: shaBefore,
-        path: packagePath + repo
+        path: pkg
       })
+        .then((response) => response.data)
         .then((commits) => commits.filter(
           (commit) => commit.sha !== shaBefore
         ))
-        .then((commits) => commits.length > 1)
+        .then((commits) => commits.length > 0)
     ))
   )
 
