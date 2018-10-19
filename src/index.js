@@ -14,13 +14,9 @@ module.exports = async (event, packages = [], options = {}) => {
   } = options
   const { before, repository = {} } = body
 
-  const updatedPackages = await getUpdatedPackages({
+  return getUpdatedPackages({
     before,
     repositoryName: repository.full_name,
     packages: packages.map((pkg) => packagePath + pkg)
   })
-
-  if (updatedPackages.length === 0) {
-    return false
-  }
 }
