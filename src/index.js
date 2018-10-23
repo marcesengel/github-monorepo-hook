@@ -3,7 +3,7 @@ const getUpdatedPackages = require('./getUpdatedPackages')
 
 module.exports = async (event, packages = [], options = {}) => {
   const { headers = {}, body = {} } = event
-  const token = headers['X-Hub-Signature']
+  const token = headers['x-hub-signature']
 
   if (!authenticate(token, body)) {
     return false
