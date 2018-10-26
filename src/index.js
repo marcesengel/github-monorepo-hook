@@ -19,4 +19,7 @@ module.exports = async (event, packages = [], options = {}) => {
     repositoryName: repository.full_name,
     packages: packages.map((pkg) => packagePath + pkg)
   })
+    .then((packages) => packages.map((pkg) => pkg.slice(
+      packagePath.length
+    )))
 }
