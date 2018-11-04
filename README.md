@@ -12,7 +12,7 @@ using the GitHub web hook secret.
 
 ## Usage
 
-This is a usage example using an AWS Lambda function behind an
+This is an usage example using an AWS Lambda function behind an
 AWS API Gateway:
 
 ```js
@@ -42,15 +42,15 @@ exports.handler = async (event) => { // event is an object containing web hook r
 
 Install using `npm install github-monorepo-hook`.
 
-### Private Repositories
-
-To use `github-monorepo-hook` with private repositories,
-simply set an environment variable called `GITHUB_TOKEN`
-to a valid [GitHub access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).
-
 ### Secret
 
 To enable event verification simply create an environment
 variable called `GITHUB_SECRET` containing your secret.
 `github-monorepo-hook` will resolve to `false` if the event
 failed the verification.
+
+### Private Repositories
+
+To use `github-monorepo-hook` with private repositories,
+simply set an environment variable called `GITHUB_TOKEN`
+to a valid [GitHub access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).

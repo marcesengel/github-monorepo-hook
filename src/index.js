@@ -12,7 +12,11 @@ module.exports = async (event, packages = [], options = {}) => {
   const {
     packagePath = 'packages/'
   } = options
-  const { before, repository = {} } = body
+  const { before, ref, repository = {} } = body
+
+  if (options.branch && ref !== '/refs/heads/' + options.branch) {
+    return []
+  }
 
   return getUpdatedPackages({
     before,
