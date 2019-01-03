@@ -57,17 +57,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } =
   }
 
   const packages = await repository.getBlob(packagesFile.sha)
-    .then((blob) => {
-      const buffer = new Buffer(blob.content, blob.encoding)
-
-      return JSON.parse(buffer.toString())
-    })
-    .then((packages) => packages.map(
-      ({ name, dependencies = [] }) => [
-        join(packagePath, name),
-        ...dependencies.map((dependency) => join(packagePath, dependency))
-      ]
-    ))
+    .then((res) => res.data)
 
   const filterTreeByPath = (tree, path) => tree.filter(
     ({ path: filePath }) => filePath.startsWith(path)
