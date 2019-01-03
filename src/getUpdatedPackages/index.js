@@ -35,7 +35,7 @@ const getTreeRecursive = async (repository, treeSha) => {
   return tree.concat(subTrees)
 }
 
-module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } = {}) => {
+module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, packagePath } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
   const repository = new GitHub(ghToken && {
     token: ghToken
@@ -68,7 +68,12 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } =
     return result
   }
 
-  return packages.reduce((changedPackageIndexes, packageDependencyPaths, packageIndex) => {
+  return packages.reduce((changedPackages, package, packageIndex) => {
+    const packageDependencyPaths = [
+      join(packagePath, package.name),
+      ...package.dependencies.map((dependency) => join(packagePath, dependency))
+    ]
+
     const changed = packageDependencyPaths.reduce((changed, path) => {
       if (changed) {
         return true
@@ -84,7 +89,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } =
         path
       ).reduce(treeToFileShas, {})
 
-      if (filesBeforeCommit.length !== filesAfterCommit.length) {
+      if (Object.keys(fileShasBeforeCommit).length !== Object.keys(fileShasAfterCommit).length) {
         return true
       }
 
@@ -98,7 +103,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } =
     }, false)
 
     return changed
-      ? changedPackageIndexes.concat(packageIndex)
-      : changedPackageIndexes
+      ? changedPackages.concat(package)
+      : changedPackages
   }, [])
 }
