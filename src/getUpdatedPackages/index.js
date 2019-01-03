@@ -45,7 +45,8 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } =
     repository.getCommit(shaBefore),
     repository.getCommit(shaAfter)
   ])
-    .then((commits) => commits.map(({ commit }) => commit.tree.sha))
+    .then((responses) => responses.map(({ data }) => data))
+    .then((commits) => commits.map(({ tree }) => tree.sha))
     .then((treeShas) => Promise.all(
       treeShas.map((treeSha) => getTreeRecursive(repository, treeSha))
     ))
