@@ -14,7 +14,7 @@ const getTreeRecursive = async (repository, treeSha) => {
 
   const { tree, truncated } = await repository.getTree(treeSha)
   if (truncated) {
-    throw new Error(`Tree layer with SHA ${treeSha} exceeded the limit of 100.000 items!`)
+    throw new Error(`Tree layer with SHA ${treeSha} exceeded the limit of 100.000 items.`)
   }
 
   const subTrees = await Promise.all(
