@@ -14,7 +14,7 @@ module.exports = async (event, packages = [], options = {}) => {
   const {
     packagePath = 'packages/'
   } = options
-  const { before, head, ref, repository = {} } = body
+  const { before, after, ref, repository = {} } = body
 
   if (options.branch && ref !== '/refs/heads/' + options.branch) {
     return []
@@ -22,7 +22,7 @@ module.exports = async (event, packages = [], options = {}) => {
 
   return getUpdatedPackages({
     before,
-    head,
+    after,
     repositoryName: repository.full_name
   })
     .then((packageIndexes) => packageIndexes.map(

@@ -33,7 +33,7 @@ const getTreeRecursive = async (repository, treeSha) => {
   return tree.concat(subTrees)
 }
 
-module.exports = async ({ before: shaBefore, head: shaAfter, repositoryName } = {}) => {
+module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
   const repository = new GitHub(ghToken && {
     token: ghToken
