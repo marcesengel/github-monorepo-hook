@@ -33,7 +33,7 @@ const getTreeRecursive = async (repository, treeSha) => {
   return tree.concat(subTrees)
 }
 
-module.exports = async ({ before: shaBefore, head: shaAfter, repositoryName, packages = [] } = {}) => {
+module.exports = async ({ before: shaBefore, head: shaAfter, repositoryName } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
   const repository = new GitHub(ghToken && {
     token: ghToken
@@ -46,6 +46,24 @@ module.exports = async ({ before: shaBefore, head: shaAfter, repositoryName, pac
     .then((commits) => commits.map(({ commit }) => commit.tree.sha))
     .then((treeShas) => Promise.all(
       treeShas.map((treeSha) => getTreeRecursive(repository, treeSha))
+    ))
+
+  const packagesFile = treeAfterCommit.find(({ path }) => path === 'packages.json')
+  if (!packagesFile) {
+    throw new Error('Target repository does not contain "packages.json".')
+  }
+
+  const packages = await repository.getBlob(packagesFile.sha)
+    .then((blob) => {
+      const buffer = new Buffer(blob.content, blob.encoding)
+
+      return JSON.parse(buffer.toString())
+    })
+    .then((packages) => packages.map(
+      ({ name, dependencies = [] }) => [
+        join(packagePath, name),
+        ...dependencies.map((dependency) => join(packagePath, dependency))
+      ]
     ))
 
   const filterTreeByPath = (tree, path) => tree.filter(

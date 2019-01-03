@@ -23,11 +23,7 @@ module.exports = async (event, packages = [], options = {}) => {
   return getUpdatedPackages({
     before,
     head,
-    repositoryName: repository.full_name,
-    packages: packages.map(({ name, dependencies = [] }) => [
-      join(packagePath, name),
-      ...dependencies.map((dependency) => join(packagePath, dependency))
-    ])
+    repositoryName: repository.full_name
   })
     .then((packageIndexes) => packageIndexes.map(
       (index) => packages[index].name
