@@ -1,6 +1,8 @@
 const authenticate = require('./authenticate')
 const getUpdatedPackages = require('./getUpdatedPackages')
 
+const { join } = require('path')
+
 module.exports = async (event, packages = [], options = {}) => {
   const { headers = {}, body = {} } = event
   const token = headers['x-hub-signature']
@@ -12,7 +14,7 @@ module.exports = async (event, packages = [], options = {}) => {
   const {
     packagePath = 'packages/'
   } = options
-  const { before, ref, repository = {} } = body
+  const { before, head, ref, repository = {} } = body
 
   if (options.branch && ref !== '/refs/heads/' + options.branch) {
     return []
@@ -20,10 +22,14 @@ module.exports = async (event, packages = [], options = {}) => {
 
   return getUpdatedPackages({
     before,
+    head,
     repositoryName: repository.full_name,
-    packages: packages.map((pkg) => packagePath + pkg)
+    packages: packages.map(({ name, dependencies = [] }) => [
+      join(packagePath, name),
+      ...dependencies.map((dependency) => join(packagePath, dependency))
+    ])
   })
-    .then((packages) => packages.map((pkg) => pkg.slice(
-      packagePath.length
-    )))
+    .then((packageIndexes) => packageIndexes.map(
+      (index) => packages[index].name
+    ))
 }
