@@ -1,5 +1,6 @@
 const GitHub = require('github-api')
 const { join } = require('path')
+const deepEqual = require('fast-deep-equal')
 
 const getTreeRecursive = async (repository, treeSha) => {
   const recursiveRequest = await repository._request(
@@ -58,6 +59,26 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
 
   const packages = await repository.getBlob(packagesFile.sha)
     .then((res) => res.data)
+
+  const packagesFileBeforeCommit = treeBeforeCommit.find(({ path }) => path === 'packages.json')
+  if (!packagesFileBeforeCommit) {
+    return packages
+  }
+
+  if (packagesFile.sha !== packagesFileBeforeCommit.sha) {
+    const packagesBeforeCommit = await repository.getBlob(packagesFileBeforeCommit.sha)
+      .then((res) => res.data)
+
+    return packages.reduce((changedPackages, packageConfig) => {
+      const oldPackageConfig = packagesBeforeCommit.find(({ name }) => name === package.name)
+
+      if (!oldPackageConfig || !deepEqual(packageConfig, oldPackageConfig)) {
+        return changedPackages.concat(packageConfig)
+      }
+
+      return changedPackages
+    }, [])
+  }
 
   const filterTreeByPath = (tree, path) => tree.filter(
     ({ path: filePath }) => filePath.startsWith(path)
