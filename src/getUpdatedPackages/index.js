@@ -70,7 +70,9 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
       .then((res) => res.data)
 
     return packages.reduce((changedPackages, packageConfig) => {
-      const oldPackageConfig = packagesBeforeCommit.find(({ name }) => name === package.name)
+      const oldPackageConfig = packagesBeforeCommit.find(
+        ({ name }) => name === packageConfig.name
+      )
 
       if (!oldPackageConfig || !deepEqual(packageConfig, oldPackageConfig)) {
         return changedPackages.concat(packageConfig)
