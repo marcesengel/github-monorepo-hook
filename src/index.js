@@ -10,11 +10,12 @@ module.exports = async (event, options = {}) => {
   }
 
   const {
-    packagePath = 'packages/'
+    packagePath = 'packages/',
+    branch = false
   } = options
   const { before, after, ref, repository = {} } = body
 
-  if (options.branch && ref !== '/refs/heads/' + options.branch) {
+  if (branch && ref !== 'refs/heads/' + branch) {
     return []
   }
 
