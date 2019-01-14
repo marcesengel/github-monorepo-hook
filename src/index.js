@@ -1,7 +1,7 @@
 const authenticate = require('./authenticate')
 const getUpdatedPackages = require('./getUpdatedPackages')
 
-module.exports = async (event, packages = [], options = {}) => {
+module.exports = async (event, options = {}) => {
   const { headers = {}, body = {} } = event
   const token = headers['x-hub-signature']
 
