@@ -94,7 +94,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
   return packages.reduce((changedPackages, package) => {
     const packageDependencyPaths = [
       join(packagePath, package.name),
-      ...package.dependencies.map((dependency) => join(packagePath, dependency))
+      ...(package.dependencies || []).map((dependency) => join(packagePath, dependency))
     ]
 
     const changed = packageDependencyPaths.reduce((changed, path) => {
