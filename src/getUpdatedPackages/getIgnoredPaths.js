@@ -9,14 +9,14 @@ const getIgnoredPaths = async (repository, tree) => {
         path === ignoreFileName || path.endsWith('/' + ignoreFileName)
       ))
       .map(async ({ sha, path }) => {
-        const { data } = repository.getBlob(sha)
+        const { data } = await repository.getBlob(sha)
 
         return { dir: posix.parse(path).dir, data }
       })
   )
 
   return ignoreFiles.reduce((ignoredPaths, ignoreFile) => (
-    ignoredPaths.concat(ignoreFile.data.split('\n').map(
+    ignoredPaths.concat(ignoreFile.data.split('\n').filter((s) => s !== '').map(
       (relativePath) => {
         const absolutePath = posix.join(ignoreFile.dir, relativePath)
         if (absolutePath.startsWith('..')) {
