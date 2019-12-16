@@ -1,0 +1,25 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": [ "node" ],
+  "rules": {
+    "import/no-commonjs": "ignore",
+    "import/no-nodejs-modules": "ignore",
+    "object-curly-spacing": [ "error", "always" ],
+    "semi": [ "error", "never" ],
+    "comma-dangle": [ "error", "only-multiline" ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**.test.js",
+        "**.specs.js",
+        "**/__mocks__/*"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}

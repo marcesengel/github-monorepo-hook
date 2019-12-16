@@ -27,11 +27,12 @@
   },
   "devDependencies": {
     "casual": "^1.5.19",
-    "jest": "^23.6.0"
+    "eslint-config-node": "^4.0.0",
+    "jest": "^24.9.0"
   },
   "dependencies": {
     "fast-deep-equal": "^2.0.1",
-    "github-api": "^3.0.0",
+    "github-api": "^3.3.0",
     "safe-compare": "^1.1.2"
   }
 }
