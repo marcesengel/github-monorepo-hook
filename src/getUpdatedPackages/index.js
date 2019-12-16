@@ -1,5 +1,5 @@
 const GitHub = require('github-api')
-const { join } = require('path')
+const { posix } = require('path')
 const deepEqual = require('fast-deep-equal')
 
 const getTreeRecursive = require('./getTreeRecursive')
@@ -69,8 +69,8 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
     }
 
     const packageDependencyPaths = [
-      join(packagePath, package.name),
-      ...(package.dependencies || []).map((dependency) => join(packagePath, dependency))
+      posix.join(packagePath, package.name),
+      ...(package.dependencies || []).map((dependency) => posix.join(packagePath, dependency))
     ]
 
     const changed = packageDependencyPaths.reduce((changed, path) => {
