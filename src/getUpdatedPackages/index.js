@@ -3,6 +3,7 @@ const { join } = require('path')
 const deepEqual = require('fast-deep-equal')
 
 const getTreeRecursive = require('./getTreeRecursive')
+const validatePackagesFile = require('./validatePackagesFile')
 
 module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, packagePath } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
@@ -27,6 +28,8 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
 
   const packages = await repository.getBlob(packagesFile.sha)
     .then((res) => res.data)
+  
+  validatePackagesFile(packages)
 
   const packagesFileBeforeCommit = treeBeforeCommit.find(({ path }) => path === 'packages.json')
   if (!packagesFileBeforeCommit) {
