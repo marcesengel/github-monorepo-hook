@@ -1,13 +1,14 @@
 const GitHub = require('github-api')
 const { posix } = require('path')
 const deepEqual = require('fast-deep-equal')
+const picomatch = require('picomatch')
 
 const getTreeRecursive = require('./getTreeRecursive')
 const validatePackagesFile = require('./validatePackagesFile')
 const getIgnoredPaths = require('./getIgnoredPaths')
 
-const filterTreeByPath = (tree, path, exclude = []) => tree.filter(
-  ({ path: filePath }) => filePath.startsWith(path) && !exclude.some((excludedPath) => filePath.startsWith(excludedPath))
+const filterTreeByPath = (tree, path, excludeFnc) => tree.filter(
+  ({ path: filePath }) => filePath.startsWith(path) && !excludeFnc(filePath)
 )
 
 const treeToFileShas = (result, { path, sha }) => {
@@ -65,6 +66,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
   }
 
   const ignoredPaths = await getIgnoredPaths(repository, treeAfterCommit)
+  const shouldIgnoreFile = picomatch(ignoredPaths)
 
   return packages.reduce((changedPackages, packageConfig) => {
     if (packagesWithChangedConfigByName.includes(packageConfig.name)) {
@@ -84,13 +86,13 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
       const fileShasBeforeCommit = filterTreeByPath(
         treeBeforeCommit,
         path,
-        ignoredPaths
+        shouldIgnoreFile
       ).reduce(treeToFileShas, {})
 
       const fileShasAfterCommit = filterTreeByPath(
         treeAfterCommit,
         path,
-        ignoredPaths
+        shouldIgnoreFile
       ).reduce(treeToFileShas, {})
 
       if (Object.keys(fileShasBeforeCommit).length !== Object.keys(fileShasAfterCommit).length) {
