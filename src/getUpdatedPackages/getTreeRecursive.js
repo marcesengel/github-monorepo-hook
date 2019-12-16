@@ -1,3 +1,5 @@
+const { posix } = require('path')
+
 const getTreeRecursive = async (repository, treeSha) => {
   const recursiveRequest = await repository._request(
     'GET',
@@ -23,7 +25,7 @@ const getTreeRecursive = async (repository, treeSha) => {
         const tree = await getTreeRecursive(repository, sha)
 
         return tree.map(({ path: entryPath, ...entry }) => ({
-          path: join(path, entryPath),
+          path: posix.join(path, entryPath),
           ...entry
         }))
       })

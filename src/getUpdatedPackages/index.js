@@ -63,14 +63,14 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
     return result
   }
 
-  return packages.reduce((changedPackages, package) => {
-    if (packagesWithChangedConfigByName.includes(package.name)) {
-      return changedPackages.concat(package)
+  return packages.reduce((changedPackages, packageConfig) => {
+    if (packagesWithChangedConfigByName.includes(packageConfig.name)) {
+      return changedPackages.concat(packageConfig)
     }
 
     const packageDependencyPaths = [
-      posix.join(packagePath, package.name),
-      ...(package.dependencies || []).map((dependency) => posix.join(packagePath, dependency))
+      posix.join(packagePath, packageConfig.name),
+      ...(packageConfig.dependencies || []).map((dependency) => posix.join(packagePath, dependency))
     ]
 
     const changed = packageDependencyPaths.reduce((changed, path) => {
@@ -102,7 +102,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
     }, false)
 
     return changed
-      ? changedPackages.concat(package)
+      ? changedPackages.concat(packageConfig)
       : changedPackages
   }, [])
 }
