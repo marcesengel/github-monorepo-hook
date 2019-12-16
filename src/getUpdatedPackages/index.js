@@ -4,6 +4,16 @@ const deepEqual = require('fast-deep-equal')
 
 const getTreeRecursive = require('./getTreeRecursive')
 const validatePackagesFile = require('./validatePackagesFile')
+const getIgnoredPaths = require('./getIgnoredPaths')
+
+const filterTreeByPath = (tree, path, exclude = []) => tree.filter(
+  ({ path: filePath }) => filePath.startsWith(path) && !exclude.some((excludedPath) => filePath.startsWith(excludedPath))
+)
+
+const treeToFileShas = (result, { path, sha }) => {
+  result[path] = sha
+  return result
+}
 
 module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, packagePath } = {}) => {
   const ghToken = process.env.GITHUB_TOKEN
@@ -54,14 +64,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
     }, [])
   }
 
-  const filterTreeByPath = (tree, path) => tree.filter(
-    ({ path: filePath }) => filePath.startsWith(path)
-  )
-
-  const treeToFileShas = (result, { path, sha }) => {
-    result[path] = sha
-    return result
-  }
+  const ignoredPaths = await getIgnoredPaths(repository, treeAfterCommit)
 
   return packages.reduce((changedPackages, packageConfig) => {
     if (packagesWithChangedConfigByName.includes(packageConfig.name)) {
@@ -80,12 +83,14 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
 
       const fileShasBeforeCommit = filterTreeByPath(
         treeBeforeCommit,
-        path
+        path,
+        ignoredPaths
       ).reduce(treeToFileShas, {})
 
       const fileShasAfterCommit = filterTreeByPath(
         treeAfterCommit,
-        path
+        path,
+        ignoredPaths
       ).reduce(treeToFileShas, {})
 
       if (Object.keys(fileShasBeforeCommit).length !== Object.keys(fileShasAfterCommit).length) {
