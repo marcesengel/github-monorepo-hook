@@ -7,11 +7,11 @@
   "license": "MIT",
   "main": "src/index.js",
   "directories": {
-    "src": "src",
+    "lib": "src",
     "test": "src/__tests__"
   },
   "files": [
-    "src"
+    "src/"
   ],
   "repository": {
     "type": "git",
