@@ -57,14 +57,21 @@ const options = {
   packagePath: 'src/packages/' // defaults to 'packages/'
 }
 
-exports.handler = async (event) => { // event is an object containing web hook request body and headers
+exports.handler = async (event) => {
+  // event is an object containing web hook request body and headers
   const changedPackages = await getChangedPackages(
     event,
-    packages,
     options
   )
 
-  console.log(changedPackages) // logs an array of the package configurations for the changed packages - this enables you to use the "packages.json" for deployment configurations or similar. Just add custom keys to your entries and use them in your application
+  console.log(changedPackages)
+  /*
+    logs an array of the package configurations
+    for the changed packages - this enables you
+    to use the "packages.json" for deployment
+    configurations etc. Just add custom keys to
+    the entries and use them in your application
+  */
 }
 ```
 
