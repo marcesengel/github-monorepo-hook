@@ -1,5 +1,7 @@
 const { posix } = require('path')
 
+const filterFiles = ({ type }) => type !== 'tree'
+
 const getTreeRecursive = async (repository, treeSha) => {
   const recursiveRequest = await repository._request(
     'GET',
@@ -9,7 +11,7 @@ const getTreeRecursive = async (repository, treeSha) => {
     .then((res) => res.data)
 
   if (!recursiveRequest.truncated) {
-    return recursiveRequest.tree
+    return recursiveRequest.tree.filter(filterFiles)
   }
 
   const { tree, truncated } = await repository.getTree(treeSha)
@@ -31,7 +33,7 @@ const getTreeRecursive = async (repository, treeSha) => {
       })
   )
 
-  return tree.concat(subTrees)
+  return tree.filter(filterFiles).concat(subTrees)
 }
 
 module.exports = getTreeRecursive
