@@ -68,10 +68,6 @@ exports.handler = async (event) => { // event is an object containing web hook r
 }
 ```
 
-### Installation
-
-Install using `npm install github-monorepo-hook`.
-
 ### Secret
 
 To enable event verification simply create an environment
