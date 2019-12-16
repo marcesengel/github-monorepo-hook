@@ -36,17 +36,18 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
     return packages
   }
 
+  let packagesWithChangedConfigByName = []
   if (packagesFile.sha !== packagesFileBeforeCommit.sha) {
     const packagesBeforeCommit = await repository.getBlob(packagesFileBeforeCommit.sha)
       .then((res) => res.data)
 
-    return packages.reduce((changedPackages, packageConfig) => {
+    packagesWithChangedConfigByName = packages.reduce((changedPackages, packageConfig) => {
       const oldPackageConfig = packagesBeforeCommit.find(
         ({ name }) => name === packageConfig.name
       )
 
       if (!oldPackageConfig || !deepEqual(packageConfig, oldPackageConfig)) {
-        return changedPackages.concat(packageConfig)
+        return changedPackages.concat(packageConfig.name)
       }
 
       return changedPackages
@@ -63,6 +64,10 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
   }
 
   return packages.reduce((changedPackages, package) => {
+    if (packagesWithChangedConfigByName.includes(package.name)) {
+      return changedPackages.concat(package)
+    }
+
     const packageDependencyPaths = [
       join(packagePath, package.name),
       ...(package.dependencies || []).map((dependency) => join(packagePath, dependency))
