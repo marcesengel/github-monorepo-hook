@@ -66,7 +66,7 @@ module.exports = async ({ before: shaBefore, after: shaAfter, repositoryName, pa
   }
 
   const ignoredPaths = await getIgnoredPaths(repository, treeAfterCommit)
-  const shouldIgnoreFile = picomatch(ignoredPaths)
+  const shouldIgnoreFile = picomatch(ignoredPaths.concat('**/' + getIgnoredPaths.ignoreFileName))
 
   return packages.reduce((changedPackages, packageConfig) => {
     if (packagesWithChangedConfigByName.includes(packageConfig.name)) {

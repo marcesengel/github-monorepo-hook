@@ -29,5 +29,6 @@ const getIgnoredPaths = async (repository, tree) => {
     ))
   ), [])
 }
+getIgnoredPaths.ignoreFileName = ignoreFileName
 
 module.exports = getIgnoredPaths
